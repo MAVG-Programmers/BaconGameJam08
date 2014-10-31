@@ -1,4 +1,4 @@
-var ballSpeed = 2
+var ballSpeed = 100
 var spawnDistance = 700
 
 function Ball() 
@@ -90,7 +90,7 @@ function Ball()
 		this.circleCounter = 0
 		
 		this.orbitRadius = Math.min(3*center.radius + 3*Math.random()*center.radius + 0.5*deltaMouse*deltaMouse, 0.4*canvas.height)
-		console.trace(this.orbitRadius)
+
 		this.circleSpeed = 100000/Math.pow(this.orbitRadius,3)
 		/*this.orbitX = Math.cos(this.crashAngle)
 		this.orbitX = Math.max(0.5, this.orbitX)
@@ -203,7 +203,9 @@ function Ball()
 	this.updateBall = function(ball, modifier)
 	{
 		ball.flightCounter += 0.01;
-								
+		
+		console.trace(ball.vector[0]);
+
 		ball.x+=ball.vector[0]
 		ball.y-=ball.vector[1]
 		/*ball.x = ball.startX + ball.vector[0] * ball.flightCounter;

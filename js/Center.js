@@ -1,5 +1,5 @@
-gunLimit = 7
-redLimit = 20
+var gunLimit = 7
+var redLimit = 20
 function Center()
 {
 	this.reloading = false

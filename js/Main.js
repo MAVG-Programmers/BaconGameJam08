@@ -10,6 +10,11 @@ canvas.width = w.innerWidth;
 canvas.height = w.innerHeight-5;
 document.body.appendChild(canvas);
 
+// powerUps:
+
+var shotGun = true
+
+
 // Game objects
 
 center = new Center()
@@ -198,29 +203,51 @@ var update = function (modifier)
 		if (Math.random() < spawnLimit && gameOver == false)
 		{
 			var ball = new Ball();
-			ball.spawn(ballSpeed+10*spawnLimit);
-			spawnLimit += 0.0005
+			ball.spawn(modifier*ballSpeed+10*spawnLimit);
+			spawnLimit += modifier*0.01
 		}
 
-		if (center.firing)
+		if (center.firing && center.gunCounter < gunLimit)
 		{
-			if (center.gunCounter < gunLimit && center.redCounter  < 255-redLimit)
+			if (center.redCounter  < 255-redLimit)
 			{
-				if (muted == false)
+				if (shotGun == false)
 				{
-					var snd = new Audio("sound/Menu1"+soundType);
-					snd.play()
+					if (muted == false)
+					{
+						var snd = new Audio("sound/Menu1"+soundType);
+						snd.play()
+					}
+
+					var laser = new Laser();
+					laser.spawn((Math.random()-0.5)*accuracy + (Math.random()-0.5)*center.gunCounter*recoil, 1);
 				}
 
-				var laser = new Laser();
-				laser.spawn(0);
+				else
+				{
+					//var accoil = (Math.random()-0.5)*accuracy + (Math.random()-0.5)*center.gunCounter*recoil
+					var numLasers = 5
+					var angleError = -0.1
+					if (muted == false)
+					{
+						var snd = new Audio("sound/Menu1.wav");
+						snd.play()
+					}
+					
+					for (l = 0; l < numLasers; l++)
+					{
+						var laser = new Laser();
+						laser.spawn(0, 5);
+						angleError += 0.05
+					}	
+				}
 			}
 
-			else if (muted == false)
+			/*else if (muted == false)
 			{
 				var refuseSound = new Audio("sound/Reject1"+soundType);
 				refuseSound.play()
-			}
+			}*/
 		}
 
 		if(fighterBar <= fighterBarMax)
@@ -335,7 +362,7 @@ var pad = new Pad()
 pad.draw()
 
 var songLength = 15*60
-if (soundType == ".wav")
+/*if (soundType == ".wav")
 {
 	var music = new Audio("music/Mix3.ogg");
 }
@@ -344,7 +371,7 @@ else
 	var music = new Audio("music/Mix3"+soundType);
 }
 
-music.play()
+music.play()*/
 var then = Date.now();
 main();
 
@@ -359,7 +386,7 @@ addEventListener("mouseup", doMouseUp, false);
 
 addEventListener("keydown", keyboard, true);
 
-var muted = false
+var muted = true
 var fighterBar = 0;
 var fighterBarMax = canvas.width;
 
@@ -459,8 +486,8 @@ function drawTurned()
     	turned.moveIntoOrbit()
         turned.circleCounter += turned.circleSpeed
 
-		turned.vector[0] = -Math.sin(turned.circleCounter + turned.crashAngle) + turned.errorSpeedX * 0.01
-		turned.vector[1] = Math.cos(turned.circleCounter + turned.crashAngle) + turned.errorSpeedY * 0.01
+		turned.vector[0] = -Math.sin(turned.circleCounter + turned.crashAngle) + turned.errorSpeedX * turned.circleSpeed
+		turned.vector[1] = Math.cos(turned.circleCounter + turned.crashAngle) + turned.errorSpeedY * turned.circleSpeed
 		turned.x += turned.vector[0]
 		turned.y += turned.vector[1]
 

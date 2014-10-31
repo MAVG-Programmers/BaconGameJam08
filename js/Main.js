@@ -268,7 +268,7 @@ var render = function (deltaTime)
 
 	else if(gameOver == false)
 	{
-		bar.drawLine(fighterBar);
+		bar.drawLine(fighterBar, deltaTime);
 
 		drawBlast();
 
@@ -514,11 +514,11 @@ function drawBlast()
 	});
 }
 
-function updateBall()
+function updateBall(modifier)
 {
 	ballArray.forEach(function(ball)
     {  
-        ball.updateBall(ball);
+        ball.updateBall(ball, modifier);
 	});
 }
 
@@ -560,11 +560,11 @@ function drawWaste()
 	});
 }
 
-function updateLasers()
+function updateLasers(modifier)
 {
 	laserArray.forEach(function(laser)
 	{	
-		laser.updateLaser(laser);
+		laser.updateLaser(modifier);
 	});
 }
 
@@ -576,11 +576,12 @@ function drawLasers()
 	});
 }
 
-function updateShots()
+function updateShots(modifier)
 {
 	shotArray.forEach(function(shot)
 	{
-		shot.updateShot(shot);
+
+		shot.updateShot(modifier);
 	});
 }
 
@@ -592,11 +593,11 @@ function drawShots()
 	});
 }
 
-function updateFighters()
+function updateFighters(modifier)
 {
 	fighterArray.forEach(function(fighter)
 	{
-		fighter.updateFighter(fighter);
+		fighter.updateFighter(fighter, modifier);
 	});
 }
 

@@ -2,6 +2,7 @@ var laserColor = '#ff0000';
 
 function Laser()
 {
+	this.modifier;
 	this.spawn = function(angleError)
 	{
 		center.reloading = true
@@ -27,7 +28,7 @@ function Laser()
 	   	this.a = dy/dx
 	    this.b = this.y - this.a*this.x
 
-		this.vector = [this.speed * Math.cos(this.rotation),- this.speed * Math.sin(this.rotation)];
+		this.vector = [this.speed * modifier * Math.cos(this.rotation),- this.speed * modifier * Math.sin(this.rotation)];
 	}
 
 	this.testCollision = function(ball2)
@@ -49,6 +50,7 @@ function Laser()
 
 	this.updateLaser = function(modifier)
 	{
+		this.modifier = modifier;
 		this.flightCounter += 1;
 						
 		this.x = this.startX + this.vector[0] * this.flightCounter;

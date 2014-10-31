@@ -200,7 +200,7 @@ function Ball()
 		this.startY = this.y
 	}
 
-	this.updateBall = function(ball)
+	this.updateBall = function(ball, modifier)
 	{
 		ball.flightCounter += 0.01;
 								

@@ -14,6 +14,53 @@ document.body.appendChild(canvas);
 
 var shotGun = true
 
+// store
+
+// LocalStorage --
+
+if (localStorage.getItem("record") == null)
+{
+	var localHighScore = []
+}
+else
+{
+	var localHighScore = localStorage.getItem("record").split(",");
+
+	console.trace("Local High Scores: ")
+	for (var i = 0; i < localHighScore.length; i++)
+	{
+		console.trace(String(i+1) + ". " + String(localHighScore[i]) + " seconds")
+	}
+}
+
+function compareNumbers(a, b) {
+  return a-b;
+}
+
+function loseGame() 
+{
+ 	survivedSeconds = String(Math.floor((Date.now()-startTime)/1000))
+	//meOverFunction(Math.floor((Date.now()-startTime)/1000));
+	gameOver = true
+	ballArray = []
+    aoeArray = []
+    turnedArray = []
+	shotArray = []
+	fighterArray = []
+	center.x = 4000
+	center.y = 4000
+	center.x = 4000
+	center.y = 4000
+	center.radius = 200
+	pad.x = 4000
+	pad.y = 4000
+
+	localHighScore.push(survivedSeconds)
+	localHighScore.sort(compareNumbers)
+	localStorage.setItem("record", localHighScore);
+	document.getElementById("overlay").style.display = "block";
+	document.getElementById("score").value = survivedSeconds       	
+}
 
 // Game objects
 
@@ -243,11 +290,11 @@ var update = function (modifier)
 				}
 			}
 
-			/*else if (muted == false)
+			else if (muted == false)
 			{
 				var refuseSound = new Audio("sound/Reject1"+soundType);
 				refuseSound.play()
-			}*/
+			}
 		}
 
 		if(fighterBar <= fighterBarMax)
@@ -362,7 +409,7 @@ var pad = new Pad()
 pad.draw()
 
 var songLength = 15*60
-/*if (soundType == ".wav")
+if (soundType == ".wav")
 {
 	var music = new Audio("music/Mix3.ogg");
 }
@@ -371,7 +418,7 @@ else
 	var music = new Audio("music/Mix3"+soundType);
 }
 
-music.play()*/
+music.play()
 var then = Date.now();
 main();
 
@@ -386,7 +433,7 @@ addEventListener("mouseup", doMouseUp, false);
 
 addEventListener("keydown", keyboard, true);
 
-var muted = true
+var muted = false
 var fighterBar = 0;
 var fighterBarMax = canvas.width;
 
@@ -440,25 +487,7 @@ function keyboard(e)
 		}
 		else //INSTADEATH
 		{
-			survivedSeconds = String(Math.floor((Date.now()-startTime)/1000))
-				//meOverFunction(Math.floor((Date.now()-startTime)/1000));
-				gameOver = true
-	       		ballArray = []
-        		aoeArray = []
-	       		turnedArray = []
-	       		shotArray = []
-	       		fighterArray = []
-	       		center.x = 4000
-	       		center.y = 4000
-	       		center.x = 4000
-	       		center.y = 4000
-	       		center.radius = 200
-	       		pad.x = 4000
-	       		pad.y = 4000
-
-	       		document.getElementById("overlay").style.display = "block";
-	       		document.getElementById("score").value = survivedSeconds
-	       	
+			loseGame()
 		}
 	}
 }

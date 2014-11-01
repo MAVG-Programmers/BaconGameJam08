@@ -61,8 +61,7 @@ function AoEBlast()
 				var distance = Math.sqrt(dx * dx + dy * dy)
 				if (distance <= this.radius)
 				{
-					turned.orbitRadius += 0.5
-					turned.circleSpeed += 0.005
+					turned.orbitRadius = Math.min(turned.orbitRadius+10, 0.5*canvas.height)
 				}
 			}
 		}

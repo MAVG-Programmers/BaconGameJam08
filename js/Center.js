@@ -59,24 +59,7 @@ function Center()
 
 		if (this.radius <= 0)
         	{
-        		survivedSeconds = String(Math.floor((Date.now()-startTime)/1000))
-				//meOverFunction(Math.floor((Date.now()-startTime)/1000));
-				gameOver = true
-	       		ballArray = []
-        		aoeArray = []
-	       		turnedArray = []
-	       		shotArray = []
-	       		fighterArray = []
-	       		center.x = 4000
-	       		center.y = 4000
-	       		center.x = 4000
-	       		center.y = 4000
-	       		center.radius = 200
-	       		pad.x = 4000
-	       		pad.y = 4000
-
-	       		document.getElementById("overlay").style.display = "block";
-	       		document.getElementById("score").value = survivedSeconds
+        		loseGame()
 	       	}
 
 		for (var wk = 0; wk < wasteArray.length; wk++)

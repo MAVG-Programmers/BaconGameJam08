@@ -89,9 +89,9 @@ function Ball()
 
 		this.circleCounter = 0
 		
-		this.orbitRadius = Math.min(3*center.radius + 3*Math.random()*center.radius + 0.5*deltaMouse*deltaMouse, 0.4*canvas.height)
+		this.orbitRadius = Math.min(2*center.radius + 2*Math.random()*center.radius + 0.5*deltaMouse*deltaMouse, 4*canvas.height)
 
-		this.circleSpeed = 100000/Math.pow(this.orbitRadius,3)
+		this.circleSpeed = this.speed*100/Math.pow(this.orbitRadius,2)
 		/*this.orbitX = Math.cos(this.crashAngle)
 		this.orbitX = Math.max(0.5, this.orbitX)
 
@@ -204,7 +204,7 @@ function Ball()
 	{
 		ball.flightCounter += 0.01;
 		
-		console.trace(ball.vector[0]);
+		//console.trace(ball.vector[0]);
 
 		ball.x+=ball.vector[0]
 		ball.y-=ball.vector[1]

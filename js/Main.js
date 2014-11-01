@@ -90,17 +90,17 @@ var deltaMouse = 0
 var deltaRotation = 0
 
 // THIS CODE DISABLES RIGHT CLICKING - SHOULD BE ACTIVATED IN THE RELEASED GAME - DEACTIVATED FOR DEBUGGING PURPOSES
-/*document.oncontextmenu = function(e){
- var evt = new Object({keyCode:93});
- stopEvent(e);
- //keyboardUp(evt);
-}
-function stopEvent(event){
- if(event.preventDefault != undefined)
-  event.preventDefault();
- if(event.stopPropagation != undefined)
-  event.stopPropagation();
-}*/
+// document.oncontextmenu = function(e){
+//  var evt = new Object({keyCode:93});
+//  stopEvent(e);
+//  //keyboardUp(evt);
+// }
+// function stopEvent(event){
+//  if(event.preventDefault != undefined)
+//   event.preventDefault();
+//  if(event.stopPropagation != undefined)
+//   event.stopPropagation();
+// }
 var submittedScore = false
 document.getElementById("playagainbtn").addEventListener("click", function (e) 
 {

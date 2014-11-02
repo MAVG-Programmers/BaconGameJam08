@@ -1,5 +1,5 @@
-//manages the items
-function itemmanager() {
+//spawns items
+function itemspawner() {
 
 	/**
 	  * The cummulative probability of all items
@@ -28,13 +28,6 @@ function itemmanager() {
 	  * Updates all active items, eventually spawns a new itembox
 	  */
 	var update = function()	{
-
-	};
-
-	/**
-	  * Draws all active items
-	  */
-	var draw = function() {
 
 	};
 

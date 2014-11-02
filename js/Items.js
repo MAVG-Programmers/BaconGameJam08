@@ -32,7 +32,7 @@ function itemspawner() {
 	var update = function()	{
 
 	};
-
+	
 	/**
 	  * Recalculates the relative probability for every item
 	  *

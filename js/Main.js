@@ -337,11 +337,13 @@ var render = function (deltaTime)
 	ctx.fillStyle = 'rgba('+String(a)+','+String(b)+','+String(c)+','+String(0.4)+')';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	
-	var my_gradient=ctx.createLinearGradient(spawnDistance*Math.cos(0.01*d),spawnDistance*Math.sin(0.01*d),-spawnDistance*Math.cos(0.01*d),-spawnDistance*Math.sin(0.01*d));
-	my_gradient.addColorStop(0,'rgba('+String(e)+','+String(b)+','+String(a)+','+String(0.4)+')');
-	my_gradient.addColorStop(1,'rgba('+String(f)+','+String(e)+','+String(c)+','+String(0.4)+')');
+	var my_gradient=ctx.createLinearGradient(spawnDistance*Math.cos(0.02*d),spawnDistance*Math.sin(0.02*d),-spawnDistance*Math.cos(0.02*d),-spawnDistance*Math.sin(0.02*d));
+	my_gradient.addColorStop(0,'rgba('+String(e)+','+String(b)+','+String(a)+','+String(0.00001*d)+')');
+	my_gradient.addColorStop(1,'rgba('+String(f)+','+String(e)+','+String(c)+','+String(0.00001*d)+')');
 	ctx.fillStyle=my_gradient;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	console.trace(0.00001*d)
 	
 	if(gameOver == true)
 	{

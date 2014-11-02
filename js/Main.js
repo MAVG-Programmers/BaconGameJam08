@@ -78,6 +78,7 @@ var ballRadius = 7
 var turnedArray = []
 var fighterArray = []
 var shotArray = []
+var itemBoxArray = []
 
 var laserArray = []
 
@@ -163,6 +164,8 @@ function doMouseDown(event)
 			angleError += 0.05
 		}
 	}*/
+	var nI = new ItemBox()
+	nI.spawn()
 	
 	// AUTOMATIC GUN
 	center.firing = true
@@ -317,6 +320,8 @@ var update = function (modifier)
 
 		updateFighters(modifier);
 
+		updateItemBoxes(modifier);
+
 		//center.redCounter-=1
 	}	
 };
@@ -330,6 +335,12 @@ var render = function (deltaTime)
 
 	
 	ctx.fillStyle = 'rgba('+String(a)+','+String(b)+','+String(c)+','+String(0.4)+')';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	
+	var my_gradient=ctx.createLinearGradient(spawnDistance*Math.cos(0.01*d),spawnDistance*Math.sin(0.01*d),-spawnDistance*Math.cos(0.01*d),-spawnDistance*Math.sin(0.01*d));
+	my_gradient.addColorStop(0,'rgba('+String(e)+','+String(b)+','+String(a)+','+String(0.4)+')');
+	my_gradient.addColorStop(1,'rgba('+String(f)+','+String(e)+','+String(c)+','+String(0.4)+')');
+	ctx.fillStyle=my_gradient;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	
 	if(gameOver == true)
@@ -355,6 +366,8 @@ var render = function (deltaTime)
 		drawWaste();
 
 		drawFighters();
+
+		drawItemBoxes();
 
 		drawShots();
 
@@ -385,10 +398,14 @@ var render = function (deltaTime)
 var startTime = Date.now();
 var aCounter = 1
 var increasing = "a"
+var increasing2 = "e"
 var a = 0
 var b = 255
 var c = 255
 var d = 1
+var e = 0
+var f = 255
+var g = 255
 
 var main = function () 
 {
@@ -409,16 +426,24 @@ var pad = new Pad()
 pad.draw()
 
 var songLength = 15*60
-if (soundType == ".wav")
+var muted = true
+if (muted == false)
 {
-	var music = new Audio("music/Mix3.ogg");
-}
-else
-{
-	var music = new Audio("music/Mix3"+soundType);
+	if (soundType == ".wav")
+	{
+		var music = new Audio("music/Mix3.ogg");
+	}
+	else
+	{
+		var music = new Audio("music/Mix3"+soundType);
+	}
+
+	music.play()
 }
 
-music.play()
+
+
+
 var then = Date.now();
 main();
 
@@ -433,7 +458,7 @@ addEventListener("mouseup", doMouseUp, false);
 
 addEventListener("keydown", keyboard, true);
 
-var muted = false
+
 var fighterBar = 0;
 var fighterBarMax = canvas.width;
 
@@ -665,6 +690,22 @@ function drawFighters()
 	});
 }
 
+function updateItemBoxes(modifier)
+{
+	itemBoxArray.forEach(function(itemBox)
+	{
+		itemBox.updateItemBox(modifier);
+	});
+}
+
+function drawItemBoxes()
+{
+	itemBoxArray.forEach(function(itemBox)
+	{	
+		itemBox.draw()
+	});
+}
+
 function screenColorChanger()
 {
 	d+=1
@@ -693,6 +734,34 @@ function screenColorChanger()
 		if (c == 255)
 		{
 			increasing = "a"
+		}
+	}
+
+	if (increasing2 == "e")
+	{
+		e+= 5
+		f-=5		
+		if (e == 255)
+		{
+			increasing2 = "f"
+		}
+	}
+	else if (increasing2 == "f")
+	{
+		f+= 5
+		g-=5
+		if (f == 255)
+		{
+			increasing2 = "g"
+		}
+	}
+	else
+	{
+		g+= 5
+		e-=5
+		if (g == 255)
+		{
+			increasing2 = "e"
 		}
 	}
 }

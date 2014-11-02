@@ -26,6 +26,8 @@ function itemspawner() {
 
 	/**
 	  * Updates all active items, eventually spawns a new itembox
+	  *
+	  * @method update
 	  */
 	var update = function()	{
 
@@ -33,6 +35,8 @@ function itemspawner() {
 
 	/**
 	  * Recalculates the relative probability for every item
+	  *
+	  * @method recalcRelativeProbabilities
 	  */
 	var recalcRelativeProbabilities = function() {
 		for(var i = 0; i < this.items.length; i++) {

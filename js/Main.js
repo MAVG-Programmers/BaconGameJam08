@@ -342,8 +342,6 @@ var render = function (deltaTime)
 	my_gradient.addColorStop(1,'rgba('+String(f)+','+String(e)+','+String(c)+','+String(0.00001*d)+')');
 	ctx.fillStyle=my_gradient;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	console.trace(0.00001*d)
 	
 	if(gameOver == true)
 	{

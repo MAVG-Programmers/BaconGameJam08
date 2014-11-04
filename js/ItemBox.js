@@ -1,6 +1,6 @@
-var startAngleError = Math.PI/3
-var gravity = 3000
-var speed =1
+var startAngleError = Math.PI/6
+var gravity = 1500
+var speed =3
 function ItemBox() 
 {
 	this.spawn = function()
@@ -11,7 +11,6 @@ function ItemBox()
 		var rNumber = Math.random()
 		this.x = center.x + spawnDistance*Math.cos(rNumber* 2 * Math.PI)
 	 	this.y = center.y + spawnDistance*Math.sin(rNumber * 2 * Math.PI)
-
 	 	var dx = center.x-this.x
 	 	var dy = center.y-this.y
 

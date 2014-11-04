@@ -378,13 +378,12 @@ var render = function (deltaTime)
 		pad.draw()
 
 		center.draw()
-
-
+		
 		var Now = Date.now()
 		survivedSeconds = Math.floor((Now-startTime)/1000)
 		ctx.fillStyle = "black"
 		ctx.font="60px Arial Black";
-		ctx.fillText(String(Math.floor((Now-startTime)/1000)),canvas.width/2-20,100)
+		ctx.fillText(String(Math.floor((Now-startTime)/1000)),canvas.width/2-20,100)		
 	}
 	
 	var wind = 0.05*Math.random()+0.5+0.05*Math.sin(0.01*d)-0.03*center.radius+0.2
@@ -412,8 +411,12 @@ var main = function ()
 	var now = Date.now();
 	var delta = now - then;
 
-	update(delta / 1000);
-	render(delta / 1000);
+	if(window.windowState !== 2)
+	{
+		update(delta / 1000);
+		render(delta / 1000);
+	}
+	
 
 	then = now;
 	requestAnimationFrame(main);

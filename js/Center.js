@@ -1,5 +1,5 @@
-var gunLimit = 7
-var redLimit = 20
+var gunLimit = 20
+var redLimit = 30
 function Center()
 {
 	this.reloading = false
@@ -12,7 +12,7 @@ function Center()
 	this.radiusChange = 0
 	this.changeSpeed = 0.3
 
-	
+
 	this.x = canvas.width/2
 	this.y = canvas.height/2
 
@@ -58,9 +58,9 @@ function Center()
 		}
 
 		if (this.radius <= 0)
-        	{
-        		loseGame()
-	       	}
+        {
+        	loseGame()
+	    }
 
 		for (var wk = 0; wk < wasteArray.length; wk++)
 		{
@@ -75,5 +75,6 @@ function Center()
 				waste.vector[1]-= 0.3*Math.sin(a)
 			}
 		}
-	}
+	}	
+	
 }

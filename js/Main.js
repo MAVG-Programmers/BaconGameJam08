@@ -1,23 +1,16 @@
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-
 // Cross-browser support for requestAnimationFrame
 var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
-
 canvas.width = w.innerWidth;
 canvas.height = w.innerHeight-5;
 document.body.appendChild(canvas);
-
 // powerUps:
-
 var shotGun = true
-
 // store
-
 // LocalStorage --
-
 if (localStorage.getItem("record") == null)
 {
 	var localHighScore = []
@@ -26,10 +19,10 @@ else
 {
 	var localHighScore = localStorage.getItem("record").split(",");
 
-	console.trace("Local High Scores: ")
+	//console.trace("Local High Scores: ")
 	for (var i = 0; i < localHighScore.length; i++)
 	{
-		console.trace(String(i+1) + ". " + String(localHighScore[i]) + " seconds")
+		//console.trace(String(i+1) + ". " + String(localHighScore[i]) + " seconds")
 	}
 }
 
@@ -49,8 +42,6 @@ function loseGame()
 	fighterArray = []
 	center.x = 4000
 	center.y = 4000
-	center.x = 4000
-	center.y = 4000
 	center.radius = 200
 	pad.x = 4000
 	pad.y = 4000
@@ -64,7 +55,7 @@ function loseGame()
 
 // Game objects
 
-center = new Center()
+var center = new Center()
 
 var pad = 
 {
@@ -164,7 +155,7 @@ function doMouseDown(event)
 			angleError += 0.05
 		}
 	}*/
-	var nI = new ItemBox()
+	var nI = new itemBox()
 	nI.spawn()
 	
 	// AUTOMATIC GUN
@@ -250,13 +241,13 @@ var update = function (modifier)
 {
 	if (gameOver == false)
 	{
-		if (Math.random() < spawnLimit && gameOver == false)
+		if (Math.random() < spawnLimit)
 		{
+				//console.trace("Creating new ball")
 			var ball = new Ball();
-			ball.spawn(modifier*ballSpeed+10*spawnLimit);
-			spawnLimit += modifier*0.01
+			ball.spawn(ballSpeed*modifier);
+			spawnLimit += 0.0001
 		}
-
 		if (center.firing && center.gunCounter < gunLimit)
 		{
 			if (center.redCounter  < 255-redLimit)
@@ -279,11 +270,9 @@ var update = function (modifier)
 					var numLasers = 5
 					var angleError = -0.1
 					if (muted == false)
-					{
-						var snd = new Audio("sound/Menu1.wav");
+					{ 
 						snd.play()
 					}
-					
 					for (l = 0; l < numLasers; l++)
 					{
 						var laser = new Laser();
@@ -392,6 +381,8 @@ var render = function (deltaTime)
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	screenColorChanger();
+
+	
 };
 
 var startTime = Date.now();

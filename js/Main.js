@@ -1,16 +1,23 @@
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
+
 // Cross-browser support for requestAnimationFrame
 var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
+
 canvas.width = w.innerWidth;
 canvas.height = w.innerHeight-5;
 document.body.appendChild(canvas);
+
 // powerUps:
+
 var shotGun = true
+
 // store
+
 // LocalStorage --
+
 if (localStorage.getItem("record") == null)
 {
 	var localHighScore = []
@@ -19,10 +26,10 @@ else
 {
 	var localHighScore = localStorage.getItem("record").split(",");
 
-	//console.trace("Local High Scores: ")
+	console.trace("Local High Scores: ")
 	for (var i = 0; i < localHighScore.length; i++)
 	{
-		//console.trace(String(i+1) + ". " + String(localHighScore[i]) + " seconds")
+		console.trace(String(i+1) + ". " + String(localHighScore[i]) + " seconds")
 	}
 }
 
@@ -42,6 +49,8 @@ function loseGame()
 	fighterArray = []
 	center.x = 4000
 	center.y = 4000
+	center.x = 4000
+	center.y = 4000
 	center.radius = 200
 	pad.x = 4000
 	pad.y = 4000
@@ -55,7 +64,7 @@ function loseGame()
 
 // Game objects
 
-var center = new Center()
+center = new Center()
 
 var pad = 
 {
@@ -69,7 +78,6 @@ var ballRadius = 7
 var turnedArray = []
 var fighterArray = []
 var shotArray = []
-var itemBoxArray = []
 
 var laserArray = []
 
@@ -82,17 +90,17 @@ var deltaMouse = 0
 var deltaRotation = 0
 
 // THIS CODE DISABLES RIGHT CLICKING - SHOULD BE ACTIVATED IN THE RELEASED GAME - DEACTIVATED FOR DEBUGGING PURPOSES
-// document.oncontextmenu = function(e){
-//  var evt = new Object({keyCode:93});
-//  stopEvent(e);
-//  //keyboardUp(evt);
-// }
-// function stopEvent(event){
-//  if(event.preventDefault != undefined)
-//   event.preventDefault();
-//  if(event.stopPropagation != undefined)
-//   event.stopPropagation();
-// }
+document.oncontextmenu = function(e){
+ var evt = new Object({keyCode:93});
+ stopEvent(e);
+ //keyboardUp(evt);
+}
+function stopEvent(event){
+ if(event.preventDefault != undefined)
+  event.preventDefault();
+ if(event.stopPropagation != undefined)
+  event.stopPropagation();
+}
 var submittedScore = false
 document.getElementById("playagainbtn").addEventListener("click", function (e) 
 {
@@ -155,8 +163,6 @@ function doMouseDown(event)
 			angleError += 0.05
 		}
 	}*/
-	var nI = new itemBox()
-	nI.spawn()
 	
 	// AUTOMATIC GUN
 	center.firing = true
@@ -241,13 +247,13 @@ var update = function (modifier)
 {
 	if (gameOver == false)
 	{
-		if (Math.random() < spawnLimit)
+		if (Math.random() < spawnLimit && gameOver == false)
 		{
-				//console.trace("Creating new ball")
 			var ball = new Ball();
-			ball.spawn(ballSpeed*modifier);
-			spawnLimit += 0.0001
+			ball.spawn(modifier*ballSpeed+10*spawnLimit);
+			spawnLimit += modifier*0.01
 		}
+
 		if (center.firing && center.gunCounter < gunLimit)
 		{
 			if (center.redCounter  < 255-redLimit)
@@ -270,9 +276,11 @@ var update = function (modifier)
 					var numLasers = 5
 					var angleError = -0.1
 					if (muted == false)
-					{ 
+					{
+						var snd = new Audio("sound/Menu1.wav");
 						snd.play()
 					}
+					
 					for (l = 0; l < numLasers; l++)
 					{
 						var laser = new Laser();
@@ -309,8 +317,6 @@ var update = function (modifier)
 
 		updateFighters(modifier);
 
-		updateItemBoxes(modifier);
-
 		//center.redCounter-=1
 	}	
 };
@@ -324,12 +330,6 @@ var render = function (deltaTime)
 
 	
 	ctx.fillStyle = 'rgba('+String(a)+','+String(b)+','+String(c)+','+String(0.4)+')';
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-	
-	var my_gradient=ctx.createLinearGradient(spawnDistance*Math.cos(0.02*d),spawnDistance*Math.sin(0.02*d),-spawnDistance*Math.cos(0.02*d),-spawnDistance*Math.sin(0.02*d));
-	my_gradient.addColorStop(0,'rgba('+String(e)+','+String(b)+','+String(a)+','+String(0.00001*d)+')');
-	my_gradient.addColorStop(1,'rgba('+String(f)+','+String(e)+','+String(c)+','+String(0.00001*d)+')');
-	ctx.fillStyle=my_gradient;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	
 	if(gameOver == true)
@@ -356,8 +356,6 @@ var render = function (deltaTime)
 
 		drawFighters();
 
-		drawItemBoxes();
-
 		drawShots();
 
 		drawLasers();
@@ -367,12 +365,13 @@ var render = function (deltaTime)
 		pad.draw()
 
 		center.draw()
-		
+
+
 		var Now = Date.now()
 		survivedSeconds = Math.floor((Now-startTime)/1000)
 		ctx.fillStyle = "black"
 		ctx.font="60px Arial Black";
-		ctx.fillText(String(Math.floor((Now-startTime)/1000)),canvas.width/2-20,100)		
+		ctx.fillText(String(Math.floor((Now-startTime)/1000)),canvas.width/2-20,100)
 	}
 	
 	var wind = 0.05*Math.random()+0.5+0.05*Math.sin(0.01*d)-0.03*center.radius+0.2
@@ -381,33 +380,23 @@ var render = function (deltaTime)
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	screenColorChanger();
-
-	
 };
 
 var startTime = Date.now();
 var aCounter = 1
 var increasing = "a"
-var increasing2 = "e"
 var a = 0
 var b = 255
 var c = 255
 var d = 1
-var e = 0
-var f = 255
-var g = 255
 
 var main = function () 
 {
 	var now = Date.now();
 	var delta = now - then;
 
-	if(window.windowState !== 2)
-	{
-		update(delta / 1000);
-		render(delta / 1000);
-	}
-	
+	update(delta / 1000);
+	render(delta / 1000);
 
 	then = now;
 	requestAnimationFrame(main);
@@ -420,24 +409,16 @@ var pad = new Pad()
 pad.draw()
 
 var songLength = 15*60
-var muted = true
-if (muted == false)
+if (soundType == ".wav")
 {
-	if (soundType == ".wav")
-	{
-		var music = new Audio("music/Mix3.ogg");
-	}
-	else
-	{
-		var music = new Audio("music/Mix3"+soundType);
-	}
-
-	music.play()
+	var music = new Audio("music/Mix3.ogg");
+}
+else
+{
+	var music = new Audio("music/Mix3"+soundType);
 }
 
-
-
-
+music.play()
 var then = Date.now();
 main();
 
@@ -452,7 +433,7 @@ addEventListener("mouseup", doMouseUp, false);
 
 addEventListener("keydown", keyboard, true);
 
-
+var muted = false
 var fighterBar = 0;
 var fighterBarMax = canvas.width;
 
@@ -684,22 +665,6 @@ function drawFighters()
 	});
 }
 
-function updateItemBoxes(modifier)
-{
-	itemBoxArray.forEach(function(itemBox)
-	{
-		itemBox.updateItemBox(modifier);
-	});
-}
-
-function drawItemBoxes()
-{
-	itemBoxArray.forEach(function(itemBox)
-	{	
-		itemBox.draw()
-	});
-}
-
 function screenColorChanger()
 {
 	d+=1
@@ -728,34 +693,6 @@ function screenColorChanger()
 		if (c == 255)
 		{
 			increasing = "a"
-		}
-	}
-
-	if (increasing2 == "e")
-	{
-		e+= 5
-		f-=5		
-		if (e == 255)
-		{
-			increasing2 = "f"
-		}
-	}
-	else if (increasing2 == "f")
-	{
-		f+= 5
-		g-=5
-		if (f == 255)
-		{
-			increasing2 = "g"
-		}
-	}
-	else
-	{
-		g+= 5
-		e-=5
-		if (g == 255)
-		{
-			increasing2 = "e"
 		}
 	}
 }

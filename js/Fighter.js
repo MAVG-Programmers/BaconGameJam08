@@ -6,7 +6,7 @@ function Fighter()
 		this.sideLength = 20
 
 		this.hunting = false;
-		this.lasts = 40 //seconds
+		this.lasts = 5 //seconds
 		this.leaving = false;
 		this.ready = false
 		this.Target = false;

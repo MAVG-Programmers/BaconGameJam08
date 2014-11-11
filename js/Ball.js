@@ -3,7 +3,11 @@ var spawnDistance = 700
 
 function Ball() 
 {
+<<<<<<< HEAD
 	this.spawn = function(speed, SpeedMod)
+=======
+	this.spawn = function(speed)
+>>>>>>> f0639f16483ac744129b871ca51487cb1c4d5fef
 	{
 		this.crashing = false
 		this.destroyed = false;
@@ -26,7 +30,11 @@ function Ball()
 		
 	 	this.spawnX = this.x
 	 	this.spawnY = this.y
+<<<<<<< HEAD
 	 	this.speed = speed * 0.8
+=======
+	 	this.speed = speed
+>>>>>>> f0639f16483ac744129b871ca51487cb1c4d5fef
 	    ballArray[ballArray.length] = this
 		this.giveDirection((center.x), (center.y), true)
 	}
@@ -114,8 +122,102 @@ function Ball()
 
 	this.updateBall = function(ball, modifier)
 	{
+<<<<<<< HEAD
 		ball.flightCounter += 0.01;
 		console.trace(ball.vector[0]);
+=======
+		var dx = ball1.x - this.x
+		var dy = ball1.y - this.y
+
+		var distance = Math.sqrt(dx*dx+dy*dy)
+
+		if (distance < ball1.radius + this.radius)
+		{
+			return true
+		}
+		else
+		{
+			return false
+		}
+	}
+
+	this.handleCollision = function(ball2, statusChange)
+	{
+		var dx = ball2.x-this.x
+		var dy = this.x-ball2.y
+		var distance = this.radius + ball2.radius
+
+		var XaxisAngle = Math.atan2(dy, dx)
+		var YaxisAngle = Math.atan2(dy, dx) - Math.PI/2
+
+		var vx = ball2.vector[0]
+		var vy = ball2.vector[1]
+
+		var vBallAngle = Math.atan2(vy, vx)
+
+		var vThisAngle = Math.atan2(this.vector[0], this.vector[1])
+
+		var ballResult = YaxisAngle + vThisAngle
+		var thisResult = YaxisAngle + vBallAngle
+
+		if (statusChange == true)
+		{
+			if (turnedArray.indexOf(this) > -1)
+			{
+
+				turnedArray.splice(turnedArray.indexOf(this), 1)
+			}
+			wasteArray[wasteArray.length] = this
+			this.color = "black"
+			ball2.color = "black"
+		}
+		
+		this.flightCounter = 0
+		this.crashTime = 5	
+		this.startX = this.x
+		this.startY = this.y
+		this.vector[0] = Math.cos(thisResult)
+		this.vector[1] = Math.sin(thisResult)
+		this.expectedToCrash = false
+		
+		ball2.expectedToCrash = false
+		ball2.flightCounter = 0
+		ball2.startX = ball2.x
+		ball2.startY = ball2.y
+		ball2.vector[0] = Math.cos(ballResult)
+		ball2.vector[1] = Math.sin(ballResult)
+		if(ballArray.indexOf(ball2)!=-1)
+		{
+			ballArray.splice(ballArray.indexOf(ball2),1)
+			wasteArray[wasteArray.length]=ball2
+		}
+	}
+
+	this.handleCenterCollision = function()
+	{
+		//console.trace("Black Ball Center Collision")
+		var dx = center.x-this.x
+		var dy = center.y-this.y
+		
+		var distanceAngle = Math.atan2(dy, dx)
+		var normalAngle = distanceAngle - Math.PI/2
+		var crashAngleC = Math.atan2(this.vector[1],this.vector[0])
+		var resultAngleC = 2*normalAngle-crashAngleC
+		
+		this.vector[0]=Math.cos(resultAngleC)
+		this.vector[1]=Math.sin(resultAngleC)
+
+		this.flightCounter = 0
+		this.startX = this.x
+		this.startY = this.y
+	}
+
+	this.updateBall = function(ball, modifier)
+	{
+		ball.flightCounter += 0.01;
+		
+		//console.trace(ball.vector[0]);
+>>>>>>> f0639f16483ac744129b871ca51487cb1c4d5fef
 
 		ball.x+=ball.vector[0]
 		ball.y-=ball.vector[1]

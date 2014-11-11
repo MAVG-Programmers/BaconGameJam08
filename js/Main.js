@@ -92,7 +92,11 @@ var deltaMouse = 0
 var deltaRotation = 0
 
 // THIS CODE DISABLES RIGHT CLICKING - SHOULD BE ACTIVATED IN THE RELEASED GAME - DEACTIVATED FOR DEBUGGING PURPOSES
+<<<<<<< HEAD
 /*document.oncontextmenu = function(e){
+=======
+document.oncontextmenu = function(e){
+>>>>>>> f0639f16483ac744129b871ca51487cb1c4d5fef
  var evt = new Object({keyCode:93});
  stopEvent(e);
  //keyboardUp(evt);
@@ -102,8 +106,12 @@ function stopEvent(event){
   event.preventDefault();
  if(event.stopPropagation != undefined)
   event.stopPropagation();
+<<<<<<< HEAD
 }*/
 
+=======
+}
+>>>>>>> f0639f16483ac744129b871ca51487cb1c4d5fef
 var submittedScore = false
 document.getElementById("playagainbtn").addEventListener("click", function (e) 
 {
@@ -148,6 +156,29 @@ else
 
 function doMouseDown(event)
 {
+<<<<<<< HEAD
+=======
+	// SHOTGUN
+	/*if (center.redCounter < 200)
+	{
+		var numLasers = 5
+		var angleError = -0.1
+		if (muted == false)
+		{
+			var snd = new Audio("sound/Menu1"+soundType);
+			snd.play()
+		}
+		
+		for (l = 0; l < numLasers; l++)
+		{
+			var laser = new Laser();
+			laser.spawn(angleError);
+			angleError += 0.05
+		}
+	}*/
+	
+	// AUTOMATIC GUN
+>>>>>>> f0639f16483ac744129b871ca51487cb1c4d5fef
 	center.firing = true
 
 	var nI = new ItemBox()
@@ -406,7 +437,11 @@ else
 	var music = new Audio("music/Mix3"+soundType);
 }
 
+<<<<<<< HEAD
 
+=======
+music.play()
+>>>>>>> f0639f16483ac744129b871ca51487cb1c4d5fef
 var then = Date.now();
 main();
 
@@ -421,6 +456,7 @@ addEventListener("mouseup", doMouseUp, false);
 
 addEventListener("keydown", keyboard, true);
 
+<<<<<<< HEAD
 var muted = true
 
 if (muted == false)
@@ -429,6 +465,9 @@ if (muted == false)
 }
 
 
+=======
+var muted = false
+>>>>>>> f0639f16483ac744129b871ca51487cb1c4d5fef
 var fighterBar = 0;
 var fighterBarMax = canvas.width;
 

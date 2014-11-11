@@ -1,295 +1,86 @@
-var ballSpeed = 100
-var spawnDistance = 700
-
-function itemBox() 
+var startAngleError = Math.PI/6
+var gravity = 1500
+var speed =3
+function ItemBox() 
 {
-	this.spawn = function(speed)
+	this.spawn = function()
 	{
-		this.crashing = false
-		this.destroyed = false;
-		this.expectedToCrash = true
-		this.beingTargeted = false
-		this.friendly = false
-		this.radius = 7
-		this.color = ballColor
+
+		this.radius = 10
+
 		var rNumber = Math.random()
-		if (test == true)
-		{
-			this.x = 0
-			this.y = 0
-		}
-		else
-		{
-			this.x = center.x + spawnDistance*Math.cos(rNumber* 2 * Math.PI)
-	 		this.y = center.y + spawnDistance*Math.sin(rNumber * 2 * Math.PI)
-		}
-		
-	 	this.spawnX = this.x
-	 	this.spawnY = this.y
-	 	this.speed = speed
-	    ballArray[ballArray.length] = this
-		this.giveDirection((center.x), (center.y), true)
+		this.x = center.x + spawnDistance*Math.cos(rNumber* 2 * Math.PI)
+	 	this.y = center.y + spawnDistance*Math.sin(rNumber * 2 * Math.PI)
+	 	var dx = center.x-this.x
+	 	var dy = center.y-this.y
+
+	 	this.a = Math.atan2(dy, dx)
+
+	 	var rn = Math.random()-0.5
+
+	 	this.a += Math.abs(rn)/rn * startAngleError
+
+	 	this.vector = [speed*Math.cos(this.a), speed*Math.sin(this.a)]
+
+	 	itemBoxArray[itemBoxArray.length] = this
 	}
 
-	this.giveDirection = function(toX, toY, expectedToCrash)
+	this.update = function(modifier)
 	{
-		this.flightCounterSpeed = 1
-		this.flightCounter = 0;
-		this.expectedToCrash = expectedToCrash
-	 	this.startX = this.x
-	 	this.startY = this.y
-		   
-	   	var dx = this.x - toX
-	   	var dy = toY  - this.y
+		var dx = this.x-center.x
+	 	var dy = center.y-this.y
+	 	var distanceSquared = dx*dx+dy*dy
 
-	   	this.a = dy/dx
-	    this.b = this.y - this.a*this.x
-
-	    this.absvector = Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
-		this.vector = [-this.speed * dx / this.absvector,-this.speed * dy / this.absvector];
-
-		if (expectedToCrash == true)
-		{
-			var circleHit = center.radius + 10
-			var sx = this.x - center.x
-		   	var sy = center.y  - this.y
-		   	
-			//this.crashTime = -(Math.sqrt(-4*(this.vector[0]*this.vector[0]+this.vector[1]*this.vector[1])*(-(this.radius + circleHit)*(this.radius + circleHit)+sx*sx+sy*sy) + (2*sx*this.vector[0]+2*sy*this.vector[1])*(2*sx*this.vector[0]+2*sy*this.vector[1]))+2*sx*this.vector[0]+2*sy*this.vector[1])/(2*this.vector[0]*this.vector[0]+2*this.vector[1]*this.vector[1])
-			//this.crashTime = Number(this.crashTime.toFixed(2))
-			this.crashTime = (spawnDistance-center.radius-this.radius-10)/(this.speed*100)
-			var distance = Math.sqrt(dx * dx + dy * dy)
-
-			this.crashAngle = -Math.atan2(dy, dx)
-			this.testCrashAngle = 180 + 180 * -this.crashAngle / Math.PI
-		}
-	}
-
-	this.turn = function()
-	{
-		this.destroyed = true;
-		if (muted == false)
-		{
-			var snd = new Audio("sound/Interface1"+soundType);
-			snd.play()
-		}
-		
-		ballArray.splice(ballArray.indexOf(this), 1)
-		turnedArray[turnedArray.length] = this
-		this.friendly = true
-		this.color = "#0000ff"
-
-		if (Math.abs(deltaRotation) > 0)
-		{
-			var angleChange = 10*deltaRotation
-			angleChange = Math.max(angleChange, -Math.PI/3)
-			angleChange = Math.min(angleChange, Math.PI/3)
-			this.crashAngle += angleChange
-		}
-		
-
-		this.circleCounter = 0
-		
-		this.orbitRadius = Math.min(2*center.radius + 2*Math.random()*center.radius + 0.5*deltaMouse*deltaMouse, 4*canvas.height)
-
-		this.circleSpeed = this.speed*100/Math.pow(this.orbitRadius,2)
-		/*this.orbitX = Math.cos(this.crashAngle)
-		this.orbitX = Math.max(0.5, this.orbitX)
-
-		this.orbitY = Math.sin(this.crashAngle)
-		this.orbitY = Math.max(0.5, this.orbitY)*/
-
-		this.expectedToCrash = false
-		this.errorSpeedX = 0
-		this.errorSpeedY = 0
-	}
-
-	this.moveIntoOrbit = function()
-	{
-		var refX = center.x + this.orbitRadius*Math.cos(this.circleCounter + this.crashAngle)
-		var refY = center.y + this.orbitRadius*Math.sin(this.circleCounter + this.crashAngle)
-
-		this.errorSpeedX = refX-this.x
-		this.errorSpeedY = refY-this.y
-	}
-
-	this.testCollision = function(ball1)
-	{
-		var dx = ball1.x - this.x
-		var dy = ball1.y - this.y
-
-		var distance = Math.sqrt(dx*dx+dy*dy)
-
-		if (distance < ball1.radius + this.radius)
-		{
-			return true
-		}
-		else
-		{
-			return false
-		}
-	}
-
-	this.handleCollision = function(ball2, statusChange)
-	{
-		var dx = ball2.x-this.x
-		var dy = this.x-ball2.y
-		var distance = this.radius + ball2.radius
-
-		var XaxisAngle = Math.atan2(dy, dx)
-		var YaxisAngle = Math.atan2(dy, dx) - Math.PI/2
-
-		var vx = ball2.vector[0]
-		var vy = ball2.vector[1]
-
-		var vBallAngle = Math.atan2(vy, vx)
-
-		var vThisAngle = Math.atan2(this.vector[0], this.vector[1])
-
-		var ballResult = YaxisAngle + vThisAngle
-		var thisResult = YaxisAngle + vBallAngle
-
-		if (statusChange == true)
-		{
-			if (turnedArray.indexOf(this) > -1)
-			{
-
-				turnedArray.splice(turnedArray.indexOf(this), 1)
-			}
-			wasteArray[wasteArray.length] = this
-			this.color = "black"
-			ball2.color = "black"
-		}
-		
-		this.flightCounter = 0
-		this.crashTime = 5	
-		this.startX = this.x
-		this.startY = this.y
-		this.vector[0] = Math.cos(thisResult)
-		this.vector[1] = Math.sin(thisResult)
-		this.expectedToCrash = false
-		
-		ball2.expectedToCrash = false
-		ball2.flightCounter = 0
-		ball2.startX = ball2.x
-		ball2.startY = ball2.y
-		ball2.vector[0] = Math.cos(ballResult)
-		ball2.vector[1] = Math.sin(ballResult)
-		if(ballArray.indexOf(ball2)!=-1)
-		{
-			ballArray.splice(ballArray.indexOf(ball2),1)
-			wasteArray[wasteArray.length]=ball2
-		}
-	}
-
-	this.handleCenterCollision = function()
-	{
-		//console.trace("Black itemBox Center Collision")
-		var dx = center.x-this.x
-		var dy = center.y-this.y
-		
-		var distanceAngle = Math.atan2(dy, dx)
-		var normalAngle = distanceAngle - Math.PI/2
-		var crashAngleC = Math.atan2(this.vector[1],this.vector[0])
-		var resultAngleC = 2*normalAngle-crashAngleC
-		
-		this.vector[0]=Math.cos(resultAngleC)
-		this.vector[1]=Math.sin(resultAngleC)
-
-		this.flightCounter = 0
-		this.startX = this.x
-		this.startY = this.y
-	}
-
-	this.updateBall = function(itemBox, modifier)
-	{
-		itemBox.flightCounter += 0.01;
-		
-		//console.trace(itemBox.vector[0]);
-
-		itemBox.x+=itemBox.vector[0]
-		itemBox.y-=itemBox.vector[1]
-		/*itemBox.x = itemBox.startX + itemBox.vector[0] * itemBox.flightCounter;
-		itemBox.y = itemBox.startY - itemBox.vector[1] * itemBox.flightCounter;*/
-         
-        if (itemBox.flightCounter >= itemBox.crashTime && itemBox.flightCounter < itemBox.crashTime +8/(itemBox.speed*100))
-        {
-        	var Dangle = Math.abs(itemBox.crashAngle-pad.rotation)
-			 
-			if(Dangle > Math.PI) 
-			{
-				Dangle = 2*Math.PI - Dangle
-			}				
-			var ComboThen = comboThen
-			var now = survivedSeconds
-	       	if (Dangle < Math.PI/4 + Math.min(Math.PI/6,Math.abs(4*deltaRotation)))
-	        {
-	       		itemBox.turn()
-	        		
-				if (survivedSeconds-ComboThen <= 1)
-	       		{
-	       			comboThen = now
-	       			
-	       			if (comboStage >= 1)
-        			{	        				
-        				try
-	        			{
-        				if (muted == false)
-       					{
-        						comboSounds[comboStage-1].play()
-        					}
-        					
-        				}
-        				catch (e)
-        				{
-        					console.trace("-")
-        				}
-        			}
-        			comboStage += 1
-        			comboHits += 1  
-        			
-					if(comboStage == 4)
-        			{
-        				if(center.radius <= 50)
-        				{
-        					center.handleRadiusChange(comboHits*5)
-        				}
-        			}
-        		}
-        		else
-        		{
-        			comboThen = now
-        			comboHits = 1
-        			comboStage = 1
-        		}
-        	}
-       	}
- 		
-        else if (itemBox.flightCounter > itemBox.crashTime + 20/(itemBox.speed*100) && itemBox.crashing==false)
-        {
-        	center.redCounter = Math.min(center.redCounter+30, 255)
-        	comboHits = 0
-        	comboStage = 0
-        	
-        	itemBox.crashing=true
-        	center.handleRadiusChange(-5)
-        	if (muted == false)
-        	{
-   				var haakon = new Audio("sound/LoseHealth"+soundType);
-				haakon.play()
-        	}
-        	
-        	ballArray.splice(ballArray.indexOf(itemBox),1)
-        	pad.draw()
-        }
-        //console.trace(itemBox.flightCounter, itemBox.crashTime, itemBox.speed, itemBox.crashing)
-	}
-
- 	this.draw = function() 
+	 	this.a = Math.atan2(dx, dy)
+		this.vector[0]-= gravity*Math.sin(this.a)/distanceSquared
+		this.vector[1]+= gravity*Math.cos(this.a)/distanceSquared
+		this.x += this.vector[0]
+		this.y += this.vector[1]
+	};
+	this.draw = function() 
  	{
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
-        ctx.fill();
-        ctx.closePath();
+ 		ctx.fillStyle = 'rgba('+String(c)+','+String(b)+','+String(a)+','+String(1)+')';
+ 		ctx.fillRect(this.x, this.y, 2*this.radius, 2*this.radius)
     };
 }
+var ItemList = [SloMo];
+
+var SloMo = function(speed){
+ 	function SloEffect(speedMod){ // Why do you have a function inside a function?
+ 		// Why is speedMod an input when it is not being used in the function?
+ 		if(SloMo === true){ // You just declared SloMo to be a function, why are you testing if it is a boolean?
+ 			{ // Two brackets, syntax error
+ 			Ball.spawn(speed, .5); // You can use this function on an instance of the class Ball, not on the clasw itself. It's a huge difference. You can climb A mountain, but you cannot climb the concept "mountain". Get it?
+ 			Ball.update(true); // Same. Btw, I don't think the update function of Ball has a parameter that should be "true" and the update function in ball is called "updateBall"
+ 			ItemBox.update(true); // Same
+ 			console.log("slomo is true")
+ 			setTimeout(function() { // This is supposed to delay the function? For 5 seconds?
+			
+ 				var SloMo = false; // Why are you declaring the function to be equal to false?
+
+
+ 			}, 5000);
+
+ 			var NormalEyz = function(speedMod){  // Why another function inside another function? Why is SloMo a function???
+			// Why is speedMod an input when it is not being used in the function?
+ 				do setTimeout(function() { // You cannot use "do" like this. I don't think there is any other usage of do than "do while", which is the same as a while loop except for that it has to run at least once. I understood that you thought you could use while 5 lines below do, and that the program would understand the magic link. It won't.
+ 			Ball.spawn(speed, 1) // Same as above. And even if this was valid code, why the hell would you want to spawn a ball in a slow motion function?
+ 			Ball.update(true); // Same as above. And there is no point in updating a ball once, even if this was valid code. That has to be done all the time, which it is automatically with balls.
+ 			console.log("NormalEyz")
+				
+ 			}, 5000);
+ 				while(NormalEyz === true) // Again, how can you possibly test if a FUNCTION IS EQUAL TO A BOOLEAN???? A function can return a boolean, but it cannot BE a boolean itself.
+ 				} // 
+ 			} // Why are there three similar brackets in a row? This is probably a syntax error.
+ 				}else{ // Else? Else what? There is no if.
+ 					NormalEyz === true; // Point 1: NormalEyz is supposed to be a function. It's not normal to declare a function to be true. Point 2: You declare variables with just one equal sign.
+ 					console.log("DO IT!");
+ 						}
+ 		var SloMo = true; // You set a function to be true again, why? And SloMo is already declared, so you don't need the "var" part.
+ }
+ } // And why is the intendation probably the worst I've ever seen?
+ // And I have no idea of what you're trying to achieve here.
+ // Slow motion can be implemented just by using a Number variable slowMotion on which the ball movement depends.
+ // So, in conclusion, this is both worthless and a piece of crap
+ // ;)
+

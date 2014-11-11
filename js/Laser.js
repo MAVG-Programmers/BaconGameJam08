@@ -33,23 +33,6 @@ function Laser()
 		this.vector = [this.speed * Math.cos(this.rotation),- this.speed * Math.sin(this.rotation)];
 	}
 
-	this.testCollision = function(ball2)
-	{
-		var dx = ball2.x - this.x
-		var dy = ball2.y - this.y
-
-		var distance = Math.sqrt(dx*dx+dy*dy)
-
-		if (distance < ball2.radius + this.radius + 7)
-		{
-			return true
-		}
-		else
-		{
-			return false
-		}
-	}
-
 	this.updateLaser = function(modifier)
 	{
 		this.flightCounter += 1;
@@ -60,9 +43,18 @@ function Laser()
 		for (var y = 0; y < ballArray.length; y++)
 		{
 			var ball3 = ballArray[y]
-			if (this.testCollision(ball3))
+			if (collisionManager.testCollision(this, ball3, 7))
 			{
 				ballArray.splice(y, 1)
+			}
+		}
+
+		for (var ib = 0; ib < itemBoxArray.length; ib++)
+		{
+			var itemBox = itemBoxArray[ib]
+			if (collisionManager.testCollision(this, itemBox, 7))
+			{
+				itemBoxArray.splice(ib, 1)
 			}
 		}
 	}

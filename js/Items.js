@@ -53,28 +53,3 @@ function ItemBox()
         
     };
 }
-var ItemList = [SloMo];
-
-
-var SloMo = function(speed){
-	function SloEffect(speedMod){
-		if(SloMo === true){
-			Ball.spawn(speed, .5);
-			Ball.update(true);
-			setTimeout(function() { 
-			
-				NormalEyz(); 
-		
-			}, 5000);
-
-			var NormalEyz = function(speedMod){
-				Ball.spawn(speed, 1)
-				SloMo === false;
-			}
-				}
-		}
-		var SloMo = true;
-	}
-
-
-

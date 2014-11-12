@@ -47,8 +47,12 @@ function CollisionManager()
 		}
 
 		wasteArray[wasteArray.length] = ball1
-		ball1.color = "black"
-		ball2.color = "black"
+		ball1.red = '0'
+		ball1.green = '0'
+		ball1.blue = '0'
+		ball2.red = '0'
+		ball2.green = '0'
+		ball2.blue = '0'
 		
 		ball1.flightCounter = 0
 		ball1.crashTime = 5	

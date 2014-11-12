@@ -1,8 +1,10 @@
+
+
 function jetBar(){
 	this.x = 0;
 	this.y = 8;
 
-	this.color = 'green';
+	this.color = 'Green';
 
 	this.drawLine = function(length, modifier){
 		ctx.fillStyle = this.color;

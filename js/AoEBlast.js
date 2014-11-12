@@ -1,6 +1,6 @@
 function AoEBlast()
 {
-	this.spawn = function()
+	this.spawn = function(x, y, radius, maxRadius, shouldIncreaseReload)
 	{
 		if (muted == false)
 		{
@@ -8,15 +8,19 @@ function AoEBlast()
 			blastSound.play()
 		}
 		
-		this.maxBlastRadius = 300
+		this.maxBlastRadius = maxRadius
 		this.color = "white"
-		this.radius = center.radius;
-		this.x = center.x;
-		this.y = center.y;
-		this.blastSpeed = 10
+		this.radius = radius;
+		this.x = x;
+		this.y = y;
+		this.blastSpeed = this.maxBlastRadius*0.02
 
-		center.reloading = true
-		center.redCounter = Math.min(center.redCounter + 200, 255)
+		if(shouldIncreaseReload)
+		{
+			center.reloading = true
+			center.redCounter = Math.min(center.redCounter + 200, 255)
+		}
+		
 
 		aoeArray[aoeArray.length] = this	
 	};	
@@ -30,21 +34,22 @@ function AoEBlast()
 			for (var b = 0; b < ballArray.length; b++)
 			{
 				var ball5 = ballArray[b]
-				var dx = ball5.x -center.x
-				var dy = ball5.y - center.y
+				var dx = ball5.x -this.x
+				var dy = ball5.y - this.y
 				var distance = Math.sqrt(dx * dx + dy * dy)
 				if (distance <= this.radius)
 				{
 					ballArray.splice(b, 1)
-					wasteArray[wasteArray.length] = ball5
-					ball5.color = "black"
+					explodingArray[explodingArray.length] = ball5
+					var blast = new AoEBlast();
+					blast.spawn(ball5.x, ball5.y, ball5.radius, 100, false);
 				}
 			}
 			for (var t = 0; t < wasteArray.length; t++)
 			{
 				var waste = wasteArray[t]
-				var dx = waste.x - center.x
-				var dy = center.y - waste.y
+				var dx = waste.x - this.x
+				var dy = this.y - waste.y
 				var distance = Math.sqrt(dx * dx + dy * dy)
 				if (distance <= this.radius)
 				{
@@ -56,8 +61,8 @@ function AoEBlast()
 			for (var u = 0; u < turnedArray.length; u++)
 			{
 				var turned = turnedArray[u]
-				var dx = turned.x - center.x
-				var dy = center.y - turned.y
+				var dx = turned.x - this.x
+				var dy = this.y - turned.y
 				var distance = Math.sqrt(dx * dx + dy * dy)
 				if (distance <= this.radius)
 				{

@@ -7,7 +7,7 @@ var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 
 canvas.width = w.innerWidth;
-canvas.height = w.innerHeight-5;
+canvas.height = w.innerHeight;
 document.body.appendChild(canvas);
 
 // powerUps:
@@ -26,10 +26,10 @@ else
 {
 	var localHighScore = localStorage.getItem("record").split(",");
 
-	console.trace("Local High Scores: ")
+	//console.trace("Local High Scores: ")
 	for (var i = 0; i < localHighScore.length; i++)
 	{
-		console.trace(String(i+1) + ". " + String(localHighScore[i]) + " seconds")
+		//console.trace(String(i+1) + ". " + String(localHighScore[i]) + " seconds")
 	}
 }
 
@@ -48,6 +48,7 @@ function loseGame()
     itemBoxArray = []
 	shotArray = []
 	fighterArray = []
+	explodingArray =[]
 	center.x = 4000
 	center.y = 4000
 	center.x = 4000
@@ -80,6 +81,7 @@ var ballRadius = 7
 var turnedArray = []
 var fighterArray = []
 var shotArray = []
+var explodingArray =[]
 
 var laserArray = []
 
@@ -90,8 +92,9 @@ var deltaMouseX = 0
 var deltaMouseY = 0
 var deltaMouse = 0
 var deltaRotation = 0
+var angle = 0
 
-// THIS CODE DISABLES RIGHT CLICKING - SHOULD BE ACTIVATED IN THE RELEASED GAME - DEACTIVATED FOR DEBUGGING PURPOSES
+// wasteBall CODE DISABLES RIGHT CLICKING - SHOULD BE ACTIVATED IN THE RELEASED GAME - DEACTIVATED FOR DEBUGGING PURPOSES
 /*document.oncontextmenu = function(e){
  var evt = new Object({keyCode:93});
  stopEvent(e);
@@ -148,8 +151,8 @@ else
 
 function doMouseDown(event)
 {
+	items[0]()
 	center.firing = true
-
 	var nI = new ItemBox()
 	nI.spawn()
 }
@@ -191,23 +194,16 @@ addEventListener("mousemove", function (e)
 	var dx = mouseX - center.x
 	var dy = center.y - mouseY
 	var distance = Math.sqrt(dx * dx + dy * dy)
-	
-	try
-	{
-		int(deltaRotation)
-		deltaRotation = (deltaRotation+Math.atan2(-dy, dx)-pad.rotation)/2
-	}
-	catch(g)
-	{
-		deltaRotation = Math.atan2(-dy, dx)-pad.rotation
-	}
 
-	
-	//console.trace(deltaRotation)
-	var angle = 0
+	deltaRotation = Math.atan2(-dy, dx)-angle
 
 	angle = Math.atan2(-dy, dx)
-	
+
+	if(deltaRotation > Math.PI) 
+	{
+		deltaRotation = 2*Math.PI - deltaRotation
+	}	
+
 	pad.x = center.x
 	pad.y = center.y
 
@@ -217,7 +213,7 @@ addEventListener("mousemove", function (e)
 
 }, false);
 
-var spawnLimit = 0.01
+var spawnLimit = 0.01	
 var test = false
 
 var collisionManager = new CollisionManager();
@@ -229,67 +225,9 @@ var bar = new jetBar();
 
 var update = function (modifier) 
 {
-	if (gameOver == false)
-	{
-		if (Math.random() < spawnLimit && gameOver == false)
-		{
-			var ball = new Ball();
-			ball.spawn(modifier*ballSpeed+10*spawnLimit);
-			spawnLimit += modifier*0.01
-		}
+		GameOver(modifier);		
 
-		if (center.firing && center.gunCounter < gunLimit)
-		{
-			if (center.redCounter  < 255-redLimit)
-			{
-				if (shotGun == false)
-				{
-					if (muted == false)
-					{
-						var snd = new Audio("sound/Menu1"+soundType);
-						snd.play()
-					}
-
-					var laser = new Laser();
-					laser.spawn((Math.random()-0.5)*accuracy + (Math.random()-0.5)*center.gunCounter*recoil, 1);
-				}
-
-				else
-				{
-					//var accoil = (Math.random()-0.5)*accuracy + (Math.random()-0.5)*center.gunCounter*recoil
-					var numLasers = 5
-					var angleError = -0.1
-					if (muted == false)
-					{
-						var snd = new Audio("sound/Menu1.wav");
-						snd.play()
-					}
-					
-					for (l = 0; l < numLasers; l++)
-					{
-						var laser = new Laser();
-						laser.spawn(0, 5);
-						angleError += 0.05
-					}	
-				}
-			}
-
-			else if (muted == false)
-			{
-				var refuseSound = new Audio("sound/Reject1"+soundType);
-				refuseSound.play()
-			}
-		}
-
-		if(fighterBar <= fighterBarMax)
-		{
-			fighterBar += 1;
-		}
-
-		if (center.changing == true)
-		{
-			center.radiusChanger(modifier)
-		}
+		updateFighterBar(modifier);
 
 		updateBlast(modifier)
 
@@ -304,7 +242,7 @@ var update = function (modifier)
 		updateFighters(modifier);
 
 		//center.redCounter-=1
-	}	
+		
 };
 
 var render = function (deltaTime) 
@@ -335,8 +273,11 @@ var render = function (deltaTime)
 		centerColor = "rgb(" +String(center.redCounter)+", 0, 0)";
 		center.redCounter = Math.max(center.redCounter-1, 0)
 		center.gunCounter = Math.max(center.gunCounter-1, 0)
-	    
-	    drawTurned();
+	    drawBall();
+
+	    drawExploding();
+
+		drawTurned();
 
 		drawWaste();
 
@@ -348,12 +289,9 @@ var render = function (deltaTime)
 
 		drawItemBoxes();
 	    
-		drawBall();
-
 		pad.draw()
 
 		center.draw()
-
 
 		var Now = Date.now()
 		survivedSeconds = Math.floor((Now-startTime)/1000)
@@ -362,10 +300,10 @@ var render = function (deltaTime)
 		ctx.fillText(String(Math.floor((Now-startTime)/1000)),canvas.width/2-20,100)
 	}
 	
-	var wind = 0.05*Math.random()+0.5+0.05*Math.sin(0.01*d)-0.03*center.radius+0.2
+	//var wind = 0.05*Math.random()+0.5+0.05*Math.sin(0.01*d)-0.03*center.radius+0.2
 	//console.trace(wind)
-	ctx.fillStyle = 'rgba('+String(a)+','+String(b)+','+String(c)+','+String(wind)+')';
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	//ctx.fillStyle = 'rgba('+String(a)+','+String(b)+','+String(c)+','+String(wind)+')';
+	//ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	screenColorChanger();
 };
@@ -390,7 +328,6 @@ var main = function ()
 	requestAnimationFrame(main);
 };
 
-var ballColor = '#CF0000';
 var centerColor = "rgb(82, 92 ,209)"; //(R,G,B)
 
 var pad = new Pad()
@@ -431,16 +368,18 @@ if (muted == false)
 
 var fighterBar = 0;
 var fighterBarMax = canvas.width;
+var fighterBarReloadTime = 1000
+var fighterBarSpeed = fighterBarMax/fighterBarReloadTime
 
 function keyboard(e)
 {
 	if(e.keyCode === 87) //32 = space
 	{
 		// W
-		if(center.redCounter === 0)
+		if(center.redCounter < 50)
 		{
 			var blast = new AoEBlast();
-			blast.spawn();
+			blast.spawn(center.x, center.y, center.radius, 300, true);
 		}
 		else if (muted == false)
 		{
@@ -501,39 +440,80 @@ function submitscore(name, score){
 	xmlhttp.send("username=" + name + "&score=" + score);
 }
 
+function GameOver(modifier)
+{
+	if (gameOver == false)
+	{
+		if (Math.random() < spawnLimit && gameOver == false)
+		{
+			var ball = new Ball();
+			ball.spawn(ballSpeed+10*spawnLimit);
+			spawnLimit += modifier*0.01
+		}
 
+		if (center.firing && center.gunCounter < gunLimit)
+		{
+			if (center.redCounter  < 255-redLimit)
+			{
+				if (shotGun == false)
+				{
+					if (muted == false)
+					{
+						var snd = new Audio("sound/Menu1"+soundType);
+						snd.play()
+					}
+
+					var laser = new Laser();
+					laser.spawn((Math.random()-0.5)*accuracy + (Math.random()-0.5)*center.gunCounter*recoil, 1);
+				}
+
+				else
+				{
+					//var accoil = (Math.random()-0.5)*accuracy + (Math.random()-0.5)*center.gunCounter*recoil
+					var numLasers = 5
+					var angleError = -0.1
+					if (muted == false)
+					{
+						var snd = new Audio("sound/Menu1.wav");
+						snd.play()
+					}
+					
+					for (l = 0; l < numLasers; l++)
+					{
+						var laser = new Laser();
+						laser.spawn(0, 5);
+						angleError += 0.05
+					}	
+				}
+			}
+
+			else if (muted == false)
+			{
+				var refuseSound = new Audio("sound/Reject1"+soundType);
+				refuseSound.play()
+			}
+		}
+	}
+}
+
+function updateFighterBar(modifier)
+{
+	if(fighterBar <= fighterBarMax)
+	{
+		fighterBar += fighterBarSpeed;
+	}
+
+	if (center.changing == true)
+	{
+		center.radiusChanger(modifier)
+	}
+}
 
 function drawTurned()
 {
 	turnedArray.forEach(function(turned)
     {
-    	turned.moveIntoOrbit()
-        turned.circleCounter += turned.circleSpeed
-
-		turned.vector[0] = -Math.sin(turned.circleCounter + turned.crashAngle) + turned.errorSpeedX * turned.circleSpeed
-		turned.vector[1] = Math.cos(turned.circleCounter + turned.crashAngle) + turned.errorSpeedY * turned.circleSpeed
-		turned.x += turned.vector[0]
-		turned.y += turned.vector[1]
-
-		if (turned.circleCounter >= 2*Math.PI)
-		{
-			turned.circleCounter = 0
-		}
-
-		for (var e = 0; e < ballArray.length; e++)
-		{
-			var ball2 = ballArray[e]
-
-			if (ball2 != turned && ball2.expectedToCrash == true)
-			{
-				if (collisionManager.testCollision(turned, ball2, 0) == true)
-				{
-					collisionManager.handleCollision(turned, ball2)
-				}
-			}
-		}
-
-		turned.draw()
+    	turned.drawTurned(turned);
 	});
 }
 
@@ -590,16 +570,16 @@ function drawWaste()
 {
 	wasteArray.forEach(function(wasteBall)
 	{
-		wasteBall.x += wasteBall.vector[0]
-		wasteBall.y += wasteBall.vector[1]
+		wasteBall.drawWaste(wasteBall);	
+	});
+}
 
-		if (collisionManager.testCollision(wasteBall, center, 0) == true)
-		{
-			collisionManager.handleCenterCollision(wasteBall)
-		}
-
-		wasteBall.draw()
-		
+function drawExploding()
+{
+	explodingArray.forEach(function(explodingBall)
+	{
+        explodingBall.die()
+		explodingBall.draw()	
 	});
 }
 

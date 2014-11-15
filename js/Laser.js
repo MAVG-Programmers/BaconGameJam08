@@ -65,6 +65,7 @@ function Laser()
 			var itemBox = itemBoxArray[ib]
 			if (collisionManager.testCollision(this, itemBox, 7))
 			{
+				itemBox.destruct()
 				itemBoxArray.splice(ib, 1)
 			}
 		}

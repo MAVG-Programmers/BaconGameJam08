@@ -7,7 +7,7 @@ function AoEBlast()
 			var blastSound = new Audio('sound/Mail1'+soundType)
 			blastSound.play()
 		}
-		
+
 		this.maxBlastRadius = maxRadius
 		this.color = "white"
 		this.radius = radius;
@@ -20,10 +20,9 @@ function AoEBlast()
 			center.reloading = true
 			center.redCounter = Math.min(center.redCounter + 200, 255)
 		}
-		
 
-		aoeArray[aoeArray.length] = this	
-	};	
+		aoeArray[aoeArray.length] = this  
+	};  
 
 	this.updateBlast = function(modifier)
 	{
@@ -45,6 +44,7 @@ function AoEBlast()
 					blast.spawn(ball5.x, ball5.y, ball5.radius, 100, false);
 				}
 			}
+
 			for (var t = 0; t < wasteArray.length; t++)
 			{
 				var waste = wasteArray[t]
@@ -58,6 +58,7 @@ function AoEBlast()
 					waste.vector[1]-= 0.3*Math.sin(a)
 				}
 			}
+
 			for (var u = 0; u < turnedArray.length; u++)
 			{
 				var turned = turnedArray[u]
@@ -72,7 +73,6 @@ function AoEBlast()
 		}
 		else
 		{
-			
 			aoeArray.splice(aoeArray.indexOf(this), 1)
 		}
 	}
@@ -81,10 +81,9 @@ function AoEBlast()
 	{
 		var al = 0.7-0.7*this.radius/this.maxBlastRadius
 		ctx.fillStyle = "rgba(255, 0, 0,"+String(al)+")";
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
-        ctx.fill();
-        ctx.closePath();
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
+		ctx.fill();
+		ctx.closePath();
 	};
-
 }
